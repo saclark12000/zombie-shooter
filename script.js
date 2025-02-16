@@ -7,8 +7,17 @@ canvas.height = window.innerHeight;
 // Global to store selected emoji for player.
 let playerEmoji = null;
 
-// NEW: Wait for emoji selection before loading bonus config and starting game.
+// NEW: Pre-load configurations on DOMContentLoaded.
 document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('loadingScreen').style.display = 'flex';
+    Promise.all([loadBonusConfig(), loadLevelConfig()])
+        .then(() => {
+            console.log("Configs loaded");
+            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById('emojiSelectScreen').style.display = 'flex';
+        })
+        .catch(e => { console.error(e); alert(e.message); });
+        
     const emojiBtns = document.querySelectorAll('.emojiBtn');
     const startButton = document.getElementById('startButton');
     emojiBtns.forEach(btn => {
@@ -20,11 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
             startButton.disabled = false;
         });
     });
+    // Modified: Start button now only hides emoji select and starts the game.
     startButton.addEventListener('click', () => {
         document.getElementById('emojiSelectScreen').style.display = 'none';
-        Promise.all([loadBonusConfig(), loadLevelConfig()])
-            .then(() => { init(); })
-            .catch(e => { console.error(e); alert(e.message); });
+        init();
     });
 });
 
@@ -71,11 +79,17 @@ let levelKills = 0;
 
 // NEW: Load level configuration.
 async function loadLevelConfig() {
+    console.log("Loading level config:");
     const response = await fetch('config/levelConfig.json');
     if (!response.ok) {
         throw new Error('Failed to load level config.');
     }
-    levelConfigData = await response.json();
+    const data = await response.json();
+    console.log("Loaded level config:", data);  // Debug log
+    if (!data.levels || !Array.isArray(data.levels)) {
+        throw new Error("Invalid level config: 'levels' property is missing or not an array.");
+    }
+    levelConfigData = data;
     return levelConfigData;
 }
 
@@ -221,6 +235,21 @@ function update() {
     });
 }
 
+// NEW: Helper function to get nearest zombie to the player.
+function getNearestZombie() {
+    if (!zombies.length) return null;
+    let nearest = zombies[0];
+    let minDist = Math.hypot(player.x - nearest.x, player.y - nearest.y);
+    zombies.forEach(zombie => {
+        let d = Math.hypot(player.x - zombie.x, player.y - zombie.y);
+        if (d < minDist) {
+            minDist = d;
+            nearest = zombie;
+        }
+    });
+    return nearest;
+}
+
 // Draw the player, zombies, lifebar, and bullet count on the canvas
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -297,6 +326,28 @@ function draw() {
         ctx.textBaseline = 'middle';
         ctx.fillText('💥', exp.x, exp.y);
     });
+    
+    // NEW: Draw crosshair over the nearest zombie.
+    const target = getNearestZombie();
+    if (target) {
+        const crosshairSize = Math.max(30, target.radius * 1.5);
+        ctx.strokeStyle = 'cyan';
+        ctx.lineWidth = 3;
+        // Outer circle.
+        ctx.beginPath();
+        ctx.arc(target.x, target.y, crosshairSize / 2 + 5, 0, Math.PI * 2);
+        ctx.stroke();
+        // Horizontal line.
+        ctx.beginPath();
+        ctx.moveTo(target.x - crosshairSize / 2 - 5, target.y);
+        ctx.lineTo(target.x + crosshairSize / 2 + 5, target.y);
+        ctx.stroke();
+        // Vertical line.
+        ctx.beginPath();
+        ctx.moveTo(target.x, target.y - crosshairSize / 2 - 5);
+        ctx.lineTo(target.x, target.y + crosshairSize / 2 + 5);
+        ctx.stroke();
+    }
     
     if (gameOver) {
         ctx.fillStyle = 'red';
@@ -469,6 +520,12 @@ function restartGame() {
 
 // Initialize game: hide loading screen, reset game state, then start game loop and spawner.
 function init() {
+    // NEW: Verify that levelConfigData is loaded before proceeding.
+    if (!levelConfigData || !levelConfigData.levels) {
+        console.error("Level configuration is undefined; check 'config/levelConfig.json'.");
+        alert("Failed to load level configuration.");
+        return;
+    }
     startTime = Date.now();
     // Set player's emoji from selection.
     player.emoji = playerEmoji;
@@ -514,7 +571,7 @@ function init() {
 // Simulate loading delay then hide loading screen
 setTimeout(() => {
     document.getElementById('loadingScreen').style.display = 'none';
-    init();
+    // Removed automatic call to init(); game will now start when startButton is clicked.
 }, 1000);
 
 // Adjust canvas size on window resize

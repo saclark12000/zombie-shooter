@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <title>Zombie Shooter</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="favicon.ico">
 </head>
 <body>
     <canvas id="gameCanvas"></canvas>
 
     <!-- New Emoji Select Menu Overlay -->
-    <div id="emojiSelectScreen">
-        <div>
+    <div id="emojiSelectScreen" class="overlay" style="display: none;">
+        <div class="overlay-content">
             <p>Select Your Player Emoji</p>
             <div id="emojiOptions">
                 <!-- Expanded emoji options -->
@@ -31,10 +32,12 @@
         </div>
     </div>
 
-    <div id="loadingScreen" style="display:none;">Loading...</div>
+    <div id="loadingScreen" class="overlay" style="display:none;">
+        Loading...
+    </div>
     <!-- Update restart overlay with two buttons -->
-    <div id="restartScreen" style="display:none;">
-        <div>
+    <div id="restartScreen" class="overlay" style="display:none;">
+        <div class="overlay-content">
             <p>Game Over</p>
             <button id="restartCurrentButton">Restart with Current Emoji</button>
             <button id="restartNewEmojiButton">Restart with New Emoji</button>

@@ -11,8 +11,8 @@ body {
     display: block;
 }
 
-/* New styles for overlays */
-#loadingScreen, #restartScreen, #emojiSelectScreen {
+/* NEW: Common overlay style */
+.overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -20,7 +20,6 @@ body {
     height: 100%;
     background: rgba(0, 0, 0, 0.8);
     color: #fff;
-    font-size: 40px;
     font-family: "Impact", "Haettenschweiler", "Arial Narrow Bold", sans-serif;
     text-shadow: 2px 2px 4px #000;
     display: flex;
@@ -28,18 +27,51 @@ body {
     justify-content: center;
     z-index: 10;
 }
-#restartScreen > div,
-#emojiSelectScreen > div {
+
+/* NEW: Inner content container for overlays */
+.overlay-content {
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
 }
 
-/* Style for emoji buttons */
+/* Update specific overlays to use the common overlay class */
+#loadingScreen,
+#restartScreen,
+#emojiSelectScreen {
+    /* Remove duplicated properties; now extend from .overlay */
+}
+
+/* Example: Override if needed */
+#emojiSelectScreen p,
+#restartScreen p {
+    margin: 0;
+    font-size: 40px;
+}
+
+/* Unified overlay button styling */
+.overlay button,
+#startButton {
+    font-size: 32px;
+    padding: 15px 30px;
+    background: #444;
+    color: #fff;
+    border: 2px solid #aaa;
+    cursor: pointer;
+    box-shadow: 0 0 10px #000;
+}
+
+/* Ensure emoji select content is center-aligned */
 #emojiOptions {
     display: grid;
     grid-template-columns: repeat(4, 60px);
     gap: 15px;
     margin: 20px 0;
 }
+
+/* Style for emoji buttons */
 .emojiBtn {
     font-size: 40px;
     width: 80px;
@@ -53,12 +85,11 @@ body {
 .emojiBtn.selected {
     background: #c49a00;
 }
-#startButton {
-    font-size: 32px;
-    padding: 15px 30px;
-    background: #444;
-    color: #fff;
-    border: 2px solid #aaa;
-    cursor: pointer;
-    box-shadow: 0 0 10px #000;
+
+/* Ensure emoji select screen content is centered */
+#emojiSelectScreen > div {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }

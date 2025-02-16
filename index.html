@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Zombie Shooter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- New Emoji Select Menu Overlay -->
+    <div id="emojiSelectScreen">
+        <div>
+            <p>Select Your Player Emoji</p>
+            <div id="emojiOptions">
+                <!-- 12 emoji options -->
+                <button class="emojiBtn">😃</button>
+                <button class="emojiBtn">😀</button>
+                <button class="emojiBtn">😁</button>
+                <button class="emojiBtn">😂</button>
+                <button class="emojiBtn">🤣</button>
+                <button class="emojiBtn">😎</button>
+                <button class="emojiBtn">😍</button>
+                <button class="emojiBtn">🤩</button>
+                <button class="emojiBtn">😇</button>
+                <button class="emojiBtn">🧐</button>
+                <button class="emojiBtn">🤓</button>
+                <button class="emojiBtn">😜</button>
+            </div>
+            <button id="startButton" disabled>Start Game</button>
+        </div>
+    </div>
+
+    <div id="loadingScreen" style="display:none;">Loading...</div>
+    <!-- Update restart overlay with two buttons -->
+    <div id="restartScreen" style="display:none;">
+        <div>
+            <p>Game Over</p>
+            <button id="restartCurrentButton">Restart with Current Emoji</button>
+            <button id="restartNewEmojiButton">Restart with New Emoji</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

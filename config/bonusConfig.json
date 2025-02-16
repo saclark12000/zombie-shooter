@@ -1,0 +1,44 @@
+{
+    "basic": {
+        "bulletBonus": {
+            "order": 1,
+            "threshold": 2,
+            "reward": { "bullets": 10 },
+            "display": {
+                "color": "yellow",
+                "text": "B",
+                "textColor": "red"
+            }
+        },
+        "lifeBonus": {
+            "order": 2,
+            "threshold": 4,
+            "reward": { "life": 3 },
+            "display": {
+                "color": "green",
+                "text": "H",
+                "textColor": "white"
+            }
+        },
+        "bulletLifeBonus": {
+            "order": 3,
+            "threshold": 4,
+            "reward": { "life": 3, "bullets": 10 },
+            "display": {
+                "color": "purple",
+                "text": "S",
+                "textColor": "white"
+            }
+        },
+        "bombBonus": {
+            "order": 4,
+            "threshold": 2,
+            "reward": { "life": 6, "bullets": 20 },
+            "display": {
+                "color": "pink",
+                "text": "BB",
+                "textColor": "blue"
+            }
+        }
+    }
+}

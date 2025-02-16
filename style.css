@@ -1,0 +1,54 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    position: relative;
+}
+#gameCanvas {
+    background: #222;
+    display: block;
+}
+
+/* New styles for overlays */
+#loadingScreen, #restartScreen, #emojiSelectScreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    font-size: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+#restartScreen > div,
+#emojiSelectScreen > div {
+    text-align: center;
+}
+
+/* Style for emoji buttons */
+#emojiOptions {
+    display: grid;
+    grid-template-columns: repeat(4, 60px);
+    gap: 10px;
+    margin: 20px 0;
+}
+.emojiBtn {
+    font-size: 32px;
+    width: 60px;
+    height: 60px;
+    background: #444;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.emojiBtn.selected {
+    background: gold;
+}
+#startButton {
+    font-size: 24px;
+    padding: 10px 20px;
+    cursor: pointer;
+}

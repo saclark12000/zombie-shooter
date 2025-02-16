@@ -1,0 +1,104 @@
+{
+  "baseSettings": {
+    "speed": 1.0,
+    "radius": 15,
+    "health": 1
+  },
+  "levels": [
+    {
+      "level": 1,
+      "bonusConfig": "basic",
+      "type": "killGoal",
+      "typeObjectives": [
+        {
+          "name": "main",
+          "config": {
+            "type": "killGoalCount",
+            "value": 5,
+            "target": "any",
+            "reward": {
+              "bullets": 10,
+              "life": 1,
+              "level": true,
+              "killAll": false
+            }
+          }
+        }
+      ],
+      "speedMultiplier": 0,
+      "radiusIncrement": 0,
+      "healthIncrement": 0
+    },
+    {
+      "level": 2,
+      "bonusConfig": "basic",
+      "type": "killGoal",
+      "typeObjectives": [
+        {
+          "name": "main",
+          "config": {
+            "type": "killGoalCount",
+            "value": 3,
+            "target": "any",
+            "reward": {
+              "level": true,
+              "killAll": false
+            }
+          }
+        }
+      ],
+      "speedMultiplier": 0,
+      "radiusIncrement": 3,
+      "healthIncrement": 0
+    },
+    {
+      "level": 3,
+      "bonusConfig": "basic",
+      "type": "killGoal",
+      "typeObjectives": [
+        {
+          "name": "main",
+          "config": {
+            "type": "killGoalCount",
+            "value": 10,
+            "target": "any",
+            "reward": {
+              "bullets": 10,
+              "life": 1,
+              "level": true,
+              "killAll": true
+            }
+          }
+        }
+      ],
+      "speedMultiplier": 5,
+      "radiusIncrement": 5,
+      "healthIncrement": 1
+    },
+    {
+      "level": 4,
+      "bonusConfig": "basic",
+      "type": "killGoal",
+      "typeObjectives": [
+        {
+          "name": "main",
+          "config": {
+            "type": "killGoalCount",
+            "value": 1,
+            "target": "any",
+            "reward": {
+              "bullets": 10,
+              "life": 1,
+              "level": true,
+              "killAll": true
+            }
+          }
+        }
+      ],
+      "speedMultiplier": 0,
+      "radiusIncrement": 15,
+      "healthIncrement": 10
+    }
+  ],
+  "maxLevel": 5
+}

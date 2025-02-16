@@ -2,7 +2,11 @@
   "baseSettings": {
     "speed": 1.0,
     "radius": 15,
-    "health": 1
+    "health": 1,
+    "speedMultiplier": 5,
+    "radiusIncrement": 5,
+    "healthIncrement": 1,
+    "maxLevel": 5
   },
   "levels": [
     {
@@ -17,14 +21,15 @@
             "value": 5,
             "target": "any",
             "reward": {
-              "bullets": 10,
-              "life": 1,
+              "bullets": 5,
+              "life": 3,
               "level": true,
               "killAll": false
             }
           }
         }
       ],
+      "hasSpawnConfig": false,
       "speedMultiplier": 0,
       "radiusIncrement": 0,
       "healthIncrement": 0
@@ -38,16 +43,18 @@
           "name": "main",
           "config": {
             "type": "killGoalCount",
-            "value": 3,
+            "value": 10,
             "target": "any",
             "reward": {
+              "bullets": 12,
               "level": true,
               "killAll": false
             }
           }
         }
       ],
-      "speedMultiplier": 0,
+      "hasSpawnConfig": false,
+      "speedMultiplier": 2,
       "radiusIncrement": 3,
       "healthIncrement": 0
     },
@@ -59,46 +66,31 @@
         {
           "name": "main",
           "config": {
-            "type": "killGoalCount",
-            "value": 10,
-            "target": "any",
+            "type": "clearTarget",
+            "timed": false,
+            "targetSpawnConfig": "zombieBoss",
             "reward": {
-              "bullets": 10,
-              "life": 1,
+              "bullets": 50000,
+              "life": 50000,
               "level": true,
               "killAll": true
             }
-          }
-        }
-      ],
-      "speedMultiplier": 5,
-      "radiusIncrement": 5,
-      "healthIncrement": 1
-    },
-    {
-      "level": 4,
-      "bonusConfig": "basic",
-      "type": "killGoal",
-      "typeObjectives": [
-        {
-          "name": "main",
-          "config": {
-            "type": "killGoalCount",
-            "value": 1,
-            "target": "any",
-            "reward": {
-              "bullets": 10,
-              "life": 1,
-              "level": true,
-              "killAll": true
+          },
+          "hasSpawnConfig": true,
+          "spawnConfig": [
+            {
+              "name": "zombieBoss",
+              "type": "zombie",
+              "killAll": true,
+              "spawnOthers": false,
+              "count": 1,
+              "speedMultiplier": 3,
+              "radiusIncrement": 15,
+              "healthIncrement": 10
             }
-          }
+          ]
         }
-      ],
-      "speedMultiplier": 0,
-      "radiusIncrement": 15,
-      "healthIncrement": 10
+      ]
     }
-  ],
-  "maxLevel": 5
+  ]
 }

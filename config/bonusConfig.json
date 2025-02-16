@@ -3,7 +3,7 @@
         "bulletBonus": {
             "order": 1,
             "threshold": 2,
-            "reward": { "bullets": 10 },
+            "reward": { "bullets": 5 },
             "display": {
                 "color": "yellow",
                 "text": "B",
@@ -12,8 +12,8 @@
         },
         "lifeBonus": {
             "order": 2,
-            "threshold": 4,
-            "reward": { "life": 3 },
+            "threshold": 2,
+            "reward": { "life": 2 },
             "display": {
                 "color": "green",
                 "text": "H",
@@ -23,7 +23,7 @@
         "bulletLifeBonus": {
             "order": 3,
             "threshold": 4,
-            "reward": { "life": 3, "bullets": 10 },
+            "reward": { "life": 2, "bullets": 5 },
             "display": {
                 "color": "purple",
                 "text": "S",
@@ -33,7 +33,7 @@
         "bombBonus": {
             "order": 4,
             "threshold": 2,
-            "reward": { "life": 6, "bullets": 20 },
+            "reward": { "life": 4, "bullets": 10 },
             "display": {
                 "color": "pink",
                 "text": "BB",

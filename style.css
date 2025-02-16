@@ -2,6 +2,9 @@ body {
     margin: 0;
     overflow: hidden;
     position: relative;
+    font-family: "Impact", "Haettenschweiler", "Arial Narrow Bold", sans-serif;
+    font-size: 18px;
+    background: #1b1b1b;
 }
 #gameCanvas {
     background: #222;
@@ -17,7 +20,9 @@ body {
     height: 100%;
     background: rgba(0, 0, 0, 0.8);
     color: #fff;
-    font-size: 32px;
+    font-size: 40px;
+    font-family: "Impact", "Haettenschweiler", "Arial Narrow Bold", sans-serif;
+    text-shadow: 2px 2px 4px #000;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -32,23 +37,28 @@ body {
 #emojiOptions {
     display: grid;
     grid-template-columns: repeat(4, 60px);
-    gap: 10px;
+    gap: 15px;
     margin: 20px 0;
 }
 .emojiBtn {
-    font-size: 32px;
-    width: 60px;
-    height: 60px;
-    background: #444;
-    border: none;
+    font-size: 40px;
+    width: 80px;
+    height: 80px;
+    background: #555;
+    border: 2px solid #aaa;
     border-radius: 8px;
     cursor: pointer;
+    box-shadow: 0 0 10px #000;
 }
 .emojiBtn.selected {
-    background: gold;
+    background: #c49a00;
 }
 #startButton {
-    font-size: 24px;
-    padding: 10px 20px;
+    font-size: 32px;
+    padding: 15px 30px;
+    background: #444;
+    color: #fff;
+    border: 2px solid #aaa;
     cursor: pointer;
+    box-shadow: 0 0 10px #000;
 }

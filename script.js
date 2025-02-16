@@ -129,25 +129,28 @@ function spawnZombie() {
         x = -20;
         y = Math.random() * canvas.height;
     }
-    // Remove killCount based factor; use currentGameLevel instead for consistent stats.
     const factor = currentGameLevel;
     let speed = Math.max(ZOMBIE_BASE.speed, ZOMBIE_BASE.speed - factor * ZOMBIE_BASE.reduction);
-    // NEW: Calculate radius based on progression factor and level config.
-    // Base growth per factor is 2; levelConfig.radiusIncrement is added to that for each step.
     const baseGrowth = 2;
     const currentLevelConfig = levelConfigData.levels[currentGameLevel];
-    let radius = ZOMBIE_BASE.radius + factor * (baseGrowth + currentLevelConfig.radiusIncrement);
-    // NEW: Increase final zombie size by a factor of 25% x radiusIncrement.
-    radius = radius * (1 + 0.25 * currentLevelConfig.radiusIncrement);
-    // NEW: Set health using only the base health and the levelConfig increment.
-    let health = ZOMBIE_BASE.health;
-    health += currentLevelConfig.healthIncrement;
-    // Apply speed and health modifiers from level config.
-    speed = speed * (1 + currentLevelConfig.speedMultiplier);
+    let spawnModifier = null;
+    if (currentLevelConfig.typeObjectives[0].hasSpawnConfig) {
+        spawnModifier = currentLevelConfig.typeObjectives[0].spawnConfig[0];
+        if (spawnModifier.killAll) {
+            zombies = [];
+        }
+    }
+    const usedSpeedMultiplier = spawnModifier ? spawnModifier.speedMultiplier : currentLevelConfig.speedMultiplier;
+    const usedRadiusIncrement = spawnModifier ? spawnModifier.radiusIncrement : currentLevelConfig.radiusIncrement;
+    const usedHealthIncrement = spawnModifier ? spawnModifier.healthIncrement : currentLevelConfig.healthIncrement;
+    let radius = ZOMBIE_BASE.radius + factor * (baseGrowth + usedRadiusIncrement);
+    radius = radius * (1 + 0.25 * usedRadiusIncrement);
+    let health = ZOMBIE_BASE.health + usedHealthIncrement;
+    speed = speed * (1 + usedSpeedMultiplier);
     // NEW: Assign a random zombie emoji.
     const zombieEmojis = ["🧟", "🧟‍♂️", "🧟‍♀️"];
     const emoji = zombieEmojis[Math.floor(Math.random() * zombieEmojis.length)];
-    zombies.push({ x, y, speed, radius, health, emoji });
+    zombies.push({ x, y, speed, radius, health, emoji, type: spawnModifier ? spawnModifier.name : "zombie" });
 }
 
 // Update positions of zombies and check for collision with the player
@@ -174,6 +177,25 @@ function update() {
             }
         }
     }
+
+    // Check for clearTarget type objectives
+    const currentLevelConfig = levelConfigData.levels[currentGameLevel];
+    if (currentLevelConfig.typeObjectives[0].config.type === "clearTarget") {
+        const targetSpawnConfig = currentLevelConfig.typeObjectives[0].config.targetSpawnConfig;
+        const targetCleared = zombies.every(zombie => zombie.type !== targetSpawnConfig);
+        if (targetCleared) {
+            // Apply rewards to the player
+            const reward = currentLevelConfig.typeObjectives[0].config.reward;
+            if (reward.bullets) {
+                player.bullets += reward.bullets;
+            }
+            if (reward.life) {
+                player.life += reward.life;
+            }
+            nextLevel();
+        }
+    }
+
     // Iterate over bonusHierarchy (in ascending order)
     bonusHierarchy.forEach((item, idx) => {
         const active = bonusActive[item.key];
@@ -362,14 +384,42 @@ function shootBullet() {
 // NEW: Advance to the next level or win the game.
 function nextLevel() {
     clearInterval(spawnInterval);
-    // Conditionally clear zombies only if killAll is true.
-    if (levelConfigData.levels[currentGameLevel].typeObjectives[0].config.reward.killAll) {
+    const currentLevelConfig = levelConfigData.levels[currentGameLevel];
+    let spawnModifier = null;
+    if (currentLevelConfig.typeObjectives[0].hasSpawnConfig) {
+        spawnModifier = currentLevelConfig.typeObjectives[0].spawnConfig[0];
+        if (spawnModifier.killAll) {
+            zombies = [];
+        }
+    }
+    if (currentLevelConfig.typeObjectives[0].config.reward.killAll) {
         zombies = [];
+    }
+    // Apply rewards to the player
+    const reward = currentLevelConfig.typeObjectives[0].config.reward;
+    if (reward.bullets) {
+        player.bullets += reward.bullets;
+    }
+    if (reward.life) {
+        player.life += reward.life;
     }
     if (currentGameLevel < levelConfigData.levels.length - 1) {
         currentGameLevel++;
         levelKills = 0;
-        spawnInterval = setInterval(spawnZombie, 200);
+        // Check next level's spawn configuration:
+        const nextLevelConfig = levelConfigData.levels[currentGameLevel];
+        let nextSpawnModifier = null;
+        if (nextLevelConfig.typeObjectives[0].hasSpawnConfig) {
+            nextSpawnModifier = nextLevelConfig.typeObjectives[0].spawnConfig[0];
+        }
+        if (nextSpawnModifier && nextSpawnModifier.spawnOthers === false) {
+            const count = nextSpawnModifier.count || 1;
+            for (let i = 0; i < count; i++) {
+                spawnZombie();
+            }
+        } else {
+            spawnInterval = setInterval(spawnZombie, 200);
+        }
     } else {
         winGame();
     }
@@ -381,6 +431,8 @@ function winGame() {
     const duration = Math.floor((Date.now() - startTime) / 1000);
     document.querySelector('#restartScreen p').textContent = `You Win! You lasted ${duration} seconds.`;
     document.getElementById('restartScreen').style.display = 'flex';
+    // Stop counters
+    gameOver = true;
 }
 
 // Event listener: when the space key is pressed, shoot a bullet at nearest zombie
@@ -440,12 +492,22 @@ function init() {
     
     document.getElementById('restartScreen').style.display = 'none';
     
-    // Pre-load zombies (spawn 5 immediately)
-    for (let i = 0; i < 5; i++) {
-        spawnZombie();
+    const currentLevelConfig = levelConfigData.levels[currentGameLevel];
+    let spawnModifier = null;
+    if (currentLevelConfig.typeObjectives[0].hasSpawnConfig) {
+        spawnModifier = currentLevelConfig.typeObjectives[0].spawnConfig[0];
     }
-    // NEW: Faster spawning interval now at 200ms.
-    spawnInterval = setInterval(spawnZombie, 200);
+    if (spawnModifier && spawnModifier.spawnOthers === false) {
+        const count = spawnModifier.count || 1;
+        for (let i = 0; i < count; i++) {
+            spawnZombie();
+        }
+    } else {
+        for (let i = 0; i < 5; i++) {
+            spawnZombie();
+        }
+        spawnInterval = setInterval(spawnZombie, 200);
+    }
     gameLoop();
 }
 

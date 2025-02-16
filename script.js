@@ -18,6 +18,22 @@ async function loadScreen(path) {
     document.body.insertAdjacentHTML('beforeend', html);
 }
 
+// NEW: Load game configuration from gameConfig.json.
+let gameConfig;
+async function loadGameConfig() {
+    try {
+        const response = await fetch('config/gameConfig.json');
+        if (!response.ok) {
+            throw new Error('Failed to load game config.');
+        }
+        gameConfig = await response.json();
+        return gameConfig;
+    } catch (e) {
+        console.error(e);
+        alert(e.message);
+    }
+}
+
 // Load screen overlays before starting the game logic.
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -27,11 +43,45 @@ document.addEventListener('DOMContentLoaded', async () => {
             loadScreen('screens/emojiSelectScreen.html'),
             loadScreen('screens/restartScreen.html')
         ]);
+
+        // Load game configuration
+        await loadGameConfig();
+
+        // Dynamically generate emoji buttons
+        const emojiOptionsContainer = document.getElementById('emojiOptions');
+        gameConfig.characterOptions.forEach(option => {
+            if (option.type === 'emoji') {
+                const button = document.createElement('button');
+                button.classList.add('emojiBtn');
+                button.textContent = option.config.emoji;
+                emojiOptionsContainer.appendChild(button);
+            }
+        });
+
+        // Register emoji button event listeners
+        const emojiBtns = document.querySelectorAll('.emojiBtn');
+        const startButton = document.getElementById('startButton');
+        emojiBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove selected class from all
+                emojiBtns.forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                playerEmoji = btn.textContent;
+                startButton.disabled = false;
+            });
+        });
+
+        // Register start button event listener
+        startButton.addEventListener('click', () => {
+            document.getElementById('emojiSelectScreen').style.display = 'none';
+            init();
+        });
+
     } catch (e) {
         console.error(e);
         alert(e.message);
     }
-    
+
     // Register restart button event listeners after screens load.
     document.getElementById('restartCurrentButton').addEventListener('click', function() {
         restartGame(); // Restart with current emoji
@@ -44,7 +94,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         playerEmoji = null;
         document.getElementById('startButton').disabled = true;
     });
-    
+
     // Show loading screen while loading configs.
     document.getElementById('loadingScreen').style.display = 'flex';
     Promise.all([loadBonusConfig(), loadLevelConfig()])
@@ -54,23 +104,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('emojiSelectScreen').style.display = 'flex';
         })
         .catch(e => { console.error(e); alert(e.message); });
-        
-    const emojiBtns = document.querySelectorAll('.emojiBtn');
-    const startButton = document.getElementById('startButton');
-    emojiBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            // Remove selected class from all
-            emojiBtns.forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            playerEmoji = btn.textContent;
-            startButton.disabled = false;
-        });
-    });
-    // Modified: Start button now only hides emoji select and starts the game.
-    startButton.addEventListener('click', () => {
-        document.getElementById('emojiSelectScreen').style.display = 'none';
-        init();
-    });
 });
 
 // NEW: Load bonus configuration from bonusConfig.json and validate it.

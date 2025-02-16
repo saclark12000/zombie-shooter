@@ -1,0 +1,112 @@
+{
+  "characterOptions": [
+    {
+      "type": "emoji",
+      "config": {
+        "emoji": "🙃",
+        "speedMultiplier": 0,
+        "radiusIncrement": 0,
+        "healthIncrement": 0
+      }
+    },
+    {
+      "type": "emoji",
+      "config": {
+        "emoji": "😎",
+        "speedMultiplier": 0,
+        "radiusIncrement": 0,
+        "healthIncrement": 0
+      }
+    },
+    {
+      "type": "emoji",
+      "config": {
+        "emoji": "😈",
+        "speedMultiplier": 0,
+        "radiusIncrement": 0,
+        "healthIncrement": 0
+      }
+    },
+    {
+      "type": "emoji",
+      "config": {
+        "emoji": "😇",
+        "speedMultiplier": 0,
+        "radiusIncrement": 0,
+        "healthIncrement": 0
+      }
+    },
+    {
+      "type": "emoji",
+      "config": {
+        "emoji": "🤠",
+        "speedMultiplier": 0,
+        "radiusIncrement": 0,
+        "healthIncrement": 0
+      }
+    },
+    {
+      "type": "emoji",
+      "config": {
+        "emoji": "👽",
+        "speedMultiplier": 0,
+        "radiusIncrement": 0,
+        "healthIncrement": 0
+      }
+    },
+    {
+      "type": "emoji",
+      "config": {
+        "emoji": "😸",
+        "speedMultiplier": 0,
+        "radiusIncrement": 0,
+        "healthIncrement": 0
+      }
+    },
+    {
+      "type": "emoji",
+      "config": {
+        "emoji": "😠",
+        "speedMultiplier": 0,
+        "radiusIncrement": 0,
+        "healthIncrement": 0
+      }
+    },
+    {
+      "type": "emoji",
+      "config": {
+        "emoji": "😵",
+        "speedMultiplier": 0,
+        "radiusIncrement": 0,
+        "healthIncrement": 0
+      }
+    },
+    {
+      "type": "emoji",
+      "config": {
+        "emoji": "🤗",
+        "speedMultiplier": 0,
+        "radiusIncrement": 0,
+        "healthIncrement": 0
+      }
+    },
+    {
+      "type": "emoji",
+      "config": {
+        "emoji": "🤪",
+        "speedMultiplier": 0,
+        "radiusIncrement": 0,
+        "healthIncrement": 0
+      }
+    },
+    {
+      "type": "emoji",
+      "config": {
+        "emoji": "😙",
+        "speedMultiplier": 0,
+        "radiusIncrement": 0,
+        "healthIncrement": 0
+      }
+    }
+  ]
+}

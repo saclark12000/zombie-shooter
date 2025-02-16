@@ -58,8 +58,8 @@
       "hasSpawnConfig": false,
       "speedMultiplier": 2,
       "radiusIncrement": 3,
-      "healthIncrement": 0,
-      "spawnRadius": 125
+      "healthIncrement": 1,
+      "spawnRadius": 75
     },
     {
       "level": 3,
@@ -88,9 +88,9 @@
               "spawnOthers": false,
               "count": 1,
               "speedMultiplier": 5,
-              "radiusIncrement": 36,
+              "radiusIncrement": 45,
               "healthIncrement": 10,
-              "spawnRadius": 75
+              "spawnRadius": 125
             }
           ]
         }

@@ -4,11 +4,48 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+// NEW: Global variable to track explosions. (Moved from bottom)
+let explosions = [];
+
 // Global to store selected emoji for player.
 let playerEmoji = null;
 
-// NEW: Pre-load configurations on DOMContentLoaded.
-document.addEventListener('DOMContentLoaded', () => {
+// NEW: Helper function to load a screen from an HTML file and append it to document.body.
+async function loadScreen(path) {
+    const response = await fetch(path);
+    if (!response.ok) throw new Error('Failed to load ' + path);
+    const html = await response.text();
+    document.body.insertAdjacentHTML('beforeend', html);
+}
+
+// Load screen overlays before starting the game logic.
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        // Load all screens from subfolder "screens"
+        await Promise.all([
+            loadScreen('screens/loadingScreen.html'),
+            loadScreen('screens/emojiSelectScreen.html'),
+            loadScreen('screens/restartScreen.html')
+        ]);
+    } catch (e) {
+        console.error(e);
+        alert(e.message);
+    }
+    
+    // Register restart button event listeners after screens load.
+    document.getElementById('restartCurrentButton').addEventListener('click', function() {
+        restartGame(); // Restart with current emoji
+    });
+    document.getElementById('restartNewEmojiButton').addEventListener('click', function() {
+        clearInterval(spawnInterval);
+        gameOver = true;
+        document.getElementById('restartScreen').style.display = 'none';
+        document.getElementById('emojiSelectScreen').style.display = 'flex';
+        playerEmoji = null;
+        document.getElementById('startButton').disabled = true;
+    });
+    
+    // Show loading screen while loading configs.
     document.getElementById('loadingScreen').style.display = 'flex';
     Promise.all([loadBonusConfig(), loadLevelConfig()])
         .then(() => {
@@ -581,5 +618,3 @@ window.addEventListener('resize', function() {
     player.x = canvas.width / 2;
     player.y = canvas.height / 2;
 });
-
-let explosions = [];  // NEW: Global array to track explosions

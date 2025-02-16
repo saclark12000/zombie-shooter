@@ -26,7 +26,7 @@
 }
 #emojiOptions {
     display: grid;
-    grid-template-columns: repeat(4, 60px);
+    grid-template-columns: repeat(4, 1fr);
     gap: 15px;
     margin: 20px 0;
 }
@@ -36,7 +36,7 @@
     height: 80px;
     background: #555;
     border: 2px solid #aaa;
-    border-radius: 8px;
+    border-radius: 0; /* Hard corners */
     cursor: pointer;
     box-shadow: 0 0 10px #000;
 }
@@ -51,4 +51,5 @@
     border: 2px solid #aaa;
     cursor: pointer;
     box-shadow: 0 0 10px #000;
+    border-radius: 0; /* Hard corners */
 }

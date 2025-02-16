@@ -165,43 +165,62 @@ const ZOMBIE_BASE = {
 
 // Modify spawnZombie: remove random speed; use progression factors.
 function spawnZombie() {
-    let x, y;
-    let side = Math.floor(Math.random() * 4);
-    if (side === 0) {           
-        x = Math.random() * canvas.width;
-        y = -20;
-    } else if (side === 1) {    
-        x = canvas.width + 20;
-        y = Math.random() * canvas.height;
-    } else if (side === 2) {    
-        x = Math.random() * canvas.width;
-        y = canvas.height + 20;
-    } else {                    
-        x = -20;
-        y = Math.random() * canvas.height;
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const currentLevelConfig = levelConfigData.levels[currentGameLevel];
+
+    // NEW: Leverage spawnConfig if available.
+    if (currentLevelConfig.hasSpawnConfig) {
+        const objectives = currentLevelConfig.typeObjectives;
+        for (let i = 0; i < objectives.length; i++) {
+            if (objectives[i].hasSpawnConfig && objectives[i].spawnConfig && objectives[i].spawnConfig.length > 0) {
+                const cfg = objectives[i].spawnConfig[0];
+                // NEW: If killAll is true, remove all existing zombies.
+                if (cfg.killAll) {
+                    zombies = [];
+                }
+                if (cfg.spawnOthers === false) {
+                    for (let j = 0; j < (cfg.count || 1); j++) {
+                        const spawnPerc = cfg.spawnRadius;
+                        const minDist = Math.min(centerX, centerY);
+                        const spawnDistance = (spawnPerc / 100) * minDist;
+                        const angle = Math.random() * 2 * Math.PI;
+                        const x = centerX + spawnDistance * Math.cos(angle);
+                        const y = centerY + spawnDistance * Math.sin(angle);
+                        let speed = ZOMBIE_BASE.speed * (1 + cfg.speedMultiplier);
+                        let radius = ZOMBIE_BASE.radius * (1 + (cfg.radiusIncrement / 10));
+                        let health = ZOMBIE_BASE.health + cfg.healthIncrement;
+                        const zombieEmojis = ["🧟", "🧟‍♂️", "🧟‍♀️"];
+                        const emoji = zombieEmojis[Math.floor(Math.random() * zombieEmojis.length)];
+                        zombies.push({ x, y, speed, radius, health, emoji, type: cfg.name });
+                    }
+                    return;
+                }
+            }
+        }
     }
+    
+    // ...existing normal spawn logic...
+    const spawnPerc = currentLevelConfig.spawnRadius; // 0-100 representing % distance to closest edge
+    const minDist = Math.min(centerX, centerY);
+    const spawnDistance = (spawnPerc / 100) * minDist;
+    const angle = Math.random() * 2 * Math.PI;
+    const x = centerX + spawnDistance * Math.cos(angle);
+    const y = centerY + spawnDistance * Math.sin(angle);
+
     const factor = currentGameLevel;
     let speed = Math.max(ZOMBIE_BASE.speed, ZOMBIE_BASE.speed - factor * ZOMBIE_BASE.reduction);
     const baseGrowth = 2;
-    const currentLevelConfig = levelConfigData.levels[currentGameLevel];
-    let spawnModifier = null;
-    if (currentLevelConfig.typeObjectives[0].hasSpawnConfig) {
-        spawnModifier = currentLevelConfig.typeObjectives[0].spawnConfig[0];
-        if (spawnModifier.killAll) {
-            zombies = [];
-        }
-    }
-    const usedSpeedMultiplier = spawnModifier ? spawnModifier.speedMultiplier : currentLevelConfig.speedMultiplier;
-    const usedRadiusIncrement = spawnModifier ? spawnModifier.radiusIncrement : currentLevelConfig.radiusIncrement;
-    const usedHealthIncrement = spawnModifier ? spawnModifier.healthIncrement : currentLevelConfig.healthIncrement;
+    const usedSpeedMultiplier = currentLevelConfig.speedMultiplier;
+    const usedRadiusIncrement = currentLevelConfig.radiusIncrement;
+    const usedHealthIncrement = currentLevelConfig.healthIncrement;
     let radius = ZOMBIE_BASE.radius + factor * (baseGrowth + usedRadiusIncrement);
     radius = radius * (1 + 0.25 * usedRadiusIncrement);
     let health = ZOMBIE_BASE.health + usedHealthIncrement;
     speed = speed * (1 + usedSpeedMultiplier);
-    // NEW: Assign a random zombie emoji.
     const zombieEmojis = ["🧟", "🧟‍♂️", "🧟‍♀️"];
     const emoji = zombieEmojis[Math.floor(Math.random() * zombieEmojis.length)];
-    zombies.push({ x, y, speed, radius, health, emoji, type: spawnModifier ? spawnModifier.name : "zombie" });
+    zombies.push({ x, y, speed, radius, health, emoji, type: "zombie" });
 }
 
 // Update positions of zombies and check for collision with the player

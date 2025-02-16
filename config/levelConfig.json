@@ -6,6 +6,7 @@
     "speedMultiplier": 5,
     "radiusIncrement": 5,
     "healthIncrement": 1,
+    "spawnRadius": 100,
     "maxLevel": 5
   },
   "levels": [
@@ -32,7 +33,8 @@
       "hasSpawnConfig": false,
       "speedMultiplier": 0,
       "radiusIncrement": 0,
-      "healthIncrement": 0
+      "healthIncrement": 0,
+      "spawnRadius": 100
     },
     {
       "level": 2,
@@ -56,7 +58,8 @@
       "hasSpawnConfig": false,
       "speedMultiplier": 2,
       "radiusIncrement": 3,
-      "healthIncrement": 0
+      "healthIncrement": 0,
+      "spawnRadius": 125
     },
     {
       "level": 3,
@@ -84,13 +87,15 @@
               "killAll": true,
               "spawnOthers": false,
               "count": 1,
-              "speedMultiplier": 3,
-              "radiusIncrement": 15,
-              "healthIncrement": 10
+              "speedMultiplier": 5,
+              "radiusIncrement": 36,
+              "healthIncrement": 10,
+              "spawnRadius": 75
             }
           ]
         }
-      ]
+      ],
+      "hasSpawnConfig": true
     }
   ]
 }

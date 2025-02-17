@@ -1,3 +1,5 @@
+import ConfigLoader from './scripts/ConfigLoader.js';
+
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -20,19 +22,6 @@ async function loadScreen(path) {
 
 // NEW: Load game configuration from gameConfig.json.
 let gameConfig;
-async function loadGameConfig() {
-    try {
-        const response = await fetch('config/gameConfig.json');
-        if (!response.ok) {
-            throw new Error('Failed to load game config.');
-        }
-        gameConfig = await response.json();
-        return gameConfig;
-    } catch (e) {
-        console.error(e);
-        alert(e.message);
-    }
-}
 
 // Load screen overlays before starting the game logic.
 document.addEventListener('DOMContentLoaded', async () => {
@@ -43,12 +32,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             loadScreen('screens/emojiSelectScreen.html'),
             loadScreen('screens/restartScreen.html')
         ]);
+        // Get emoji options container for dynamic emoji buttons.
+        const emojiOptionsContainer = document.getElementById('emojiOptions');
 
         // Load game configuration
-        await loadGameConfig();
+        await ConfigLoader.loadGameConfig().then(config => {
+            gameConfig = config;
+        });
 
         // Dynamically generate emoji buttons
-        const emojiOptionsContainer = document.getElementById('emojiOptions');
         gameConfig.characterOptions.forEach(option => {
             if (option.type === 'emoji') {
                 const button = document.createElement('button');

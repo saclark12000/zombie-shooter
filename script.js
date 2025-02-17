@@ -267,12 +267,14 @@ function spawnZombie() {
 // Update positions of zombies and check for collision with the player
 function update() {
     // NEW: Gradually move player toward mousePos.
+    // NEW: Gradually move player toward mousePos using a tolerance threshold.
+    const tolerance = 5;
     const dx = mousePos.x - player.x;
     const dy = mousePos.y - player.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    if (dist > 1) {
-        player.x += (dx / dist) * playerMoveSpeed;
-        player.y += (dy / dist) * playerMoveSpeed;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    if (distance > tolerance) {
+        player.x += (dx / distance) * playerMoveSpeed;
+        player.y += (dy / distance) * playerMoveSpeed;
     }
 
     // Iterate backwards to safely remove zombies on collision

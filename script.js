@@ -378,8 +378,12 @@ function draw() {
     ctx.fillStyle = 'white';
     ctx.font = '20px sans-serif';
     ctx.textAlign = 'left';
-    ctx.fillText('Health: ' + player.life + ' | Bullets: ' + player.bullets + ' | Level: ' + currentLevel + ' | Time: ' + elapsed + ' sec | Kills: ' + killCount, 20, 30);
-    
+    // Status bar text
+    // Calculate kills left until the next bonus
+    const nextBonus = bonusHierarchy[currentTierIndex];
+    const killsUntilNextBonus = nextBonus.threshold - bonusCounters[nextBonus.key];
+    const nextBonusText = nextBonus.display.text;
+    ctx.fillText('Health: ' + player.life + ' | Bullets: ' + player.bullets + ' | Level: ' + currentLevel + ' | Time: ' + elapsed + ' sec | Kills: ' + killCount + ' | Next Bonus: ' + nextBonusText + ' in ' + killsUntilNextBonus + ' kills ', 20, 30);
     // Draw dynamic bonus items from bonusActive using bonusHierarchy:
     bonusHierarchy.forEach(item => {
         const active = bonusActive[item.key];

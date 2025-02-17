@@ -366,7 +366,28 @@ function draw() {
     ctx.font = '40px sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(player.emoji, player.x, player.y);
+    if (player.flashExpiry && Date.now() < player.flashExpiry) {
+        if (player.flashMsg) {
+            ctx.fillStyle = 'red';
+            //ctx.fillText(player.flashMsg, player.x, player.y);
+            // draw red circle
+            ctx.beginPath();
+            ctx.arc(player.x, player.y, 30, 0, Math.PI * 2);
+            ctx.fill();
+
+        } else {
+            ctx.fillStyle = 'orange';
+            //ctx.fillText(player.emoji, player.x, player.y);
+            // draw orange circle
+            ctx.beginPath();
+            ctx.arc(player.x, player.y, 30, 0, Math.PI * 2);
+            ctx.fill();
+
+        }
+    } else {
+        ctx.fillStyle = 'white';
+        ctx.fillText(player.emoji, player.x, player.y);
+    }
     
     // Updated: Draw zombies as emojis with size proportional to their radius
     zombies.forEach(zombie => {
@@ -486,8 +507,16 @@ canvas.addEventListener('click', function(e) {
 
 // New function to shoot a bullet at the nearest zombie
 function shootBullet() {
-    if (player.bullets <= 0 || zombies.length === 0) return;
-    // Find nearest zombie:
+    if (player.bullets <= 0) {
+        player.flashMsg = "⛔";
+        player.flashExpiry = Date.now() + 50; // quick 100ms flash for no bullet
+        return;
+    }
+    // Successful fire: clear any flash message and set colorful flash expiry.
+    player.flashMsg = undefined;
+    player.flashExpiry = Date.now() + 50; // flash lasts 200ms
+    
+    // Proceed with normal firing logic:
     let nearestZombie = zombies[0];
     let minDist = Math.hypot(player.x - nearestZombie.x, player.y - nearestZombie.y);
     zombies.forEach(zombie => {
@@ -497,40 +526,29 @@ function shootBullet() {
             nearestZombie = zombie;
         }
     });
-    // Decrement bullet count.
     player.bullets--;
-    // NEW: Decrease zombie health and set flash expiry for the red flash effect.
     nearestZombie.health--;
-    nearestZombie.flashExpiry = Date.now() + 100; // flash for 100ms
+    nearestZombie.flashExpiry = Date.now() + 50; // zombie flash for 100ms
     if (nearestZombie.health <= 0) {
-        // NEW: Add explosion effect (lasting 300ms)
         explosions.push({ x: nearestZombie.x, y: nearestZombie.y, startTime: Date.now(), duration: 300 });
-        // Remove killed zombie and increment kill count.
         zombies = zombies.filter(zombie => zombie !== nearestZombie);
         killCount++;
         levelKills++;
-        // Check level objective from levelConfig.
         const currentLevelGoal = levelConfigData.levels[currentGameLevel].typeObjectives[0].config.value;
         if (levelKills >= currentLevelGoal) {
-            // NEW: If killAll parameter is set, remove all zombies.
             if (levelConfigData.levels[currentGameLevel].typeObjectives[0].config.reward.killAll) {
                 zombies = [];
             }
             nextLevel();
         }
     }
-
-    // Dynamically increment counter for the current bonus tier
     const currBonus = bonusHierarchy[currentTierIndex];
     bonusCounters[currBonus.key]++;
     if (!bonusActive[currBonus.key] && bonusCounters[currBonus.key] >= currBonus.threshold) {
-        // Spawn bonus for current tier at the killed zombie's position
         bonusActive[currBonus.key] = { x: nearestZombie.x, y: nearestZombie.y, radius: 15 };
-        // Advance tier if not at the highest index:
         if (currentTierIndex < bonusHierarchy.length - 1) {
             currentTierIndex++;
         }
-        // Reset counters for tiers from currentTierIndex onward
         bonusHierarchy.slice(currentTierIndex).forEach(item => {
             bonusCounters[item.key] = 0;
         });

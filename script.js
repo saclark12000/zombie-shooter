@@ -6,6 +6,10 @@ const ctx = canvas.getContext('2d');
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+// NEW: Global variables for player movement control.
+let mousePos = { x: canvas.width / 2, y: canvas.height / 2 };
+let playerMoveSpeed = 5; // Dynamic speed can be updated later.
+
 // NEW: Global variable to track explosions. (Moved from bottom)
 let explosions = [];
 
@@ -69,23 +73,35 @@ document.addEventListener('DOMContentLoaded', async () => {
             init();
         });
 
+        // Attach mousemove listener on canvas to update mousePos.
+        canvas.addEventListener('mousemove', function(e) {
+            const rect = canvas.getBoundingClientRect();
+            mousePos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+        });
+
+        // Register event listeners for restart buttons only if they exist.
+        const restartCurrentButton = document.getElementById('restartCurrentButton');
+        if (restartCurrentButton) {
+            restartCurrentButton.addEventListener('click', () => {
+                restartGame();
+            });
+        }
+        const restartNewEmojiButton = document.getElementById('restartNewEmojiButton');
+        if (restartNewEmojiButton) {
+            restartNewEmojiButton.addEventListener('click', () => {
+                clearInterval(spawnInterval);
+                gameOver = true;
+                document.getElementById('restartScreen').style.display = 'none';
+                document.getElementById('emojiSelectScreen').style.display = 'flex';
+                playerEmoji = null;
+                document.getElementById('startButton').disabled = true;
+            });
+        }
+
     } catch (e) {
         console.error(e);
         alert(e.message);
     }
-
-    // Register restart button event listeners after screens load.
-    document.getElementById('restartCurrentButton').addEventListener('click', function() {
-        restartGame(); // Restart with current emoji
-    });
-    document.getElementById('restartNewEmojiButton').addEventListener('click', function() {
-        clearInterval(spawnInterval);
-        gameOver = true;
-        document.getElementById('restartScreen').style.display = 'none';
-        document.getElementById('emojiSelectScreen').style.display = 'flex';
-        playerEmoji = null;
-        document.getElementById('startButton').disabled = true;
-    });
 
     // Show loading screen while loading configs.
     document.getElementById('loadingScreen').style.display = 'flex';
@@ -250,6 +266,15 @@ function spawnZombie() {
 
 // Update positions of zombies and check for collision with the player
 function update() {
+    // NEW: Gradually move player toward mousePos.
+    const dx = mousePos.x - player.x;
+    const dy = mousePos.y - player.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist > 1) {
+        player.x += (dx / dist) * playerMoveSpeed;
+        player.y += (dy / dist) * playerMoveSpeed;
+    }
+
     // Iterate backwards to safely remove zombies on collision
     for (let i = zombies.length - 1; i >= 0; i--) {
         let zombie = zombies[i];
@@ -455,13 +480,6 @@ function gameLoop() {
 // Event listener: Shoot zombies on mouse click if within a zombie's radius
 canvas.addEventListener('click', function(e) {
     shootBullet();
-});
-
-// Update player's position on mouse move.
-canvas.addEventListener('mousemove', function(e) {
-    const rect = canvas.getBoundingClientRect();
-    player.x = e.clientX - rect.left;
-    player.y = e.clientY - rect.top;
 });
 
 // New function to shoot a bullet at the nearest zombie
